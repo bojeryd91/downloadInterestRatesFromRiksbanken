@@ -6,7 +6,6 @@ library(hash)
 
 loadDictionary <- function() {
   dict <- hash()
-  dict[["repo"]]  <- "g2-SECBREPOEFF=on&"
   dict[["SE1M"]]  <- "g6-SETB1MBENCHC=on&"
   dict[["SE3M"]]  <- "g6-SETB3MBENCH=on&"
   dict[["SE6M"]]  <- "g6-SETB6MBENCH=on&"
@@ -22,22 +21,24 @@ loadDictionary <- function() {
   dict[["STIBOR6M"]]  <- "g5-SEDP6MSTIBORDELAYC=on&"
   dict[["STIBOR9M"]]  <- "g5-SEDP9MSTIBOR=on&"
   dict[["STIBOR12M"]] <- "g5-SEDP12MSTIBOR=on&"
+  dict[["RB_policy"]]  <- "g2-SECBREPOEFF=on&"
   dict[["RB_deposit"]] <- "g2-SECBDEPOEFF=on&"
   dict[["RB_lending"]] <- "g2-SECBLENDEFF=on&"
   return(dict)
 }
 
 # Freq can take values Day week Month Quarter Year
-downloadYear <- function(year, list_of_rates, freq = "Day",
+downloadYear <- function(year, list_of_rates, freq = "Month",
                          filename = "defaultName.csv") {
   str_part1 <- paste0("https://www.riksbank.se/en-gb/statistics/", 
                       "search-interest--exchange-rates/?c=cAverage&f=",
                       freq, "&from=01%2f01%2f", year, "&", sep="")
   
-  list_of_possible_rates = c("repo", "SE1M", "SE3M", "SE6M", "SE2Y", "SE5Y", 
+  list_of_possible_rates = c("SE1M", "SE3M", "SE6M", "SE2Y", "SE5Y", 
                              "SE7Y", "SE10Y", "STIBORTN", "STIBOR1W", 
                              "STIBOR1M", "STIBOR2M", "STIBOR3M", "STIBOR6M",
-                             "STIBOR9M", "STIBOR12M", "RB_deposit")
+                             "STIBOR9M", "STIBOR12M",
+                             "RB_policy", "RB_deposit", "RB_lending")
   dictionary <- loadDictionary()
   str_part2 <- ""
   
@@ -55,8 +56,9 @@ downloadYear <- function(year, list_of_rates, freq = "Day",
 }
 
 # Download
-for (year in 1994:1995){
-  filename <- paste0("./Downloaded-data/rates_", year, ".csv")
-  downloadYear(year, c("repo", "RB_deposit", "RB_lending",
-                          "STIBORTN", "STIBOR1W"), "day", filename)
+freq = "Month"
+for (year in 1994:2020){
+  filename <- paste0("./Downloaded-data/rates_", year, "_freq_", freq, ".csv")
+  downloadYear(year, c("RB_policy", "RB_deposit", "RB_lending",
+                       "STIBORTN", "STIBOR1W", "hej"), freq, filename)
 }
